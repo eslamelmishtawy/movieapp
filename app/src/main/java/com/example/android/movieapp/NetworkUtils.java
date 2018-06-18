@@ -1,0 +1,58 @@
+package com.example.android.movieapp;
+
+import android.net.Uri;
+import android.util.Log;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Scanner;
+
+public class NetworkUtils {
+
+    private static final String TAG = NetworkUtils.class.getSimpleName();
+    private static final String MOVIE_URL = "https://api.themoviedb.org";
+    final static String QUERY_PARAM = "api_key";
+
+
+    public static URL buildUrl(int id) {
+        Uri builtUri = Uri.parse(MOVIE_URL).buildUpon()
+                .path("3/" + "movie/" + Integer.toString(id))
+                .appendQueryParameter(QUERY_PARAM, "4e300fef67ec466d8676e3e807204ef4")
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        Log.v(TAG, "Built URI " + url);
+
+        return url;
+    }
+
+
+    public static String getResponseFromHttpUrl(URL url) throws IOException {
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        try {
+            InputStream in = urlConnection.getInputStream();
+
+            Scanner scanner = new Scanner(in);
+            scanner.useDelimiter("\\A");
+
+            boolean hasInput = scanner.hasNext();
+            if (hasInput) {
+                return scanner.next();
+            } else {
+                return null;
+            }
+        } finally {
+            urlConnection.disconnect();
+        }
+    }
+
+}
