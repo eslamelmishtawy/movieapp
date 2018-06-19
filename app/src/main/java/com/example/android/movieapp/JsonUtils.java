@@ -11,18 +11,25 @@ import java.net.HttpURLConnection;
 
 public class JsonUtils {
     private static final String TAG = NetworkUtils.class.getSimpleName();
-    public static String getMoviePoster(Context context, String movieJsonString)
+    public static String[] getMoviePoster(Context context, String movieJsonString)
             throws JSONException {
 
-
+        final String RESULTS ="results";
         final String POSTER_PATH = "poster_path";
 
-        String moviePoster = null;
+        String[] moviePoster = null;
 
         JSONObject movieJson = new JSONObject(movieJsonString);
 
-            moviePoster = movieJson.getString(POSTER_PATH);
-            moviePoster = "http://image.tmdb.org/t/p/w185//" + moviePoster;
+        JSONArray moviesArray = movieJson.getJSONArray(RESULTS);
+
+        moviePoster = new String[moviesArray.length()];
+
+        for(int i = 0; i < moviesArray.length(); i++) {
+            JSONObject image = moviesArray.getJSONObject(i);
+            moviePoster[i] = image.getString(POSTER_PATH);
+            moviePoster[i] = "http://image.tmdb.org/t/p/w185//" + moviePoster[i];
+        }
 
     return moviePoster;
     }

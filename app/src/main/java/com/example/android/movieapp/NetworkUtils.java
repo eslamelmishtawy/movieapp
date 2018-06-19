@@ -17,10 +17,10 @@ public class NetworkUtils {
     final static String QUERY_PARAM = "api_key";
 
 
-    public static URL buildUrl(int id) {
+    public static URL buildUrl(String key) {
         Uri builtUri = Uri.parse(MOVIE_URL).buildUpon()
-                .path("3/" + "movie/" + Integer.toString(id))
-                .appendQueryParameter(QUERY_PARAM, "4e300fef67ec466d8676e3e807204ef4")
+                .path("3/discover/movie/")
+                .appendQueryParameter(QUERY_PARAM, key)
                 .build();
 
         URL url = null;
@@ -37,13 +37,12 @@ public class NetworkUtils {
 
 
     public static String getResponseFromHttpUrl(URL url) throws IOException {
+        Log.v(TAG, "Built URI " + url);
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         try {
             InputStream in = urlConnection.getInputStream();
-
             Scanner scanner = new Scanner(in);
             scanner.useDelimiter("\\A");
-
             boolean hasInput = scanner.hasNext();
             if (hasInput) {
                 return scanner.next();

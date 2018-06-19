@@ -46,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadMovieData() {
         showMovieData();
-        int id = 650;
-        new MovieTask().execute(id);
+        String key = "4e300fef67ec466d8676e3e807204ef4";
+        new MovieTask().execute(key);
     }
 
     private void showMovieData() {
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 
-    public class MovieTask extends AsyncTask<Integer, Void, String> {
+    public class MovieTask extends AsyncTask<String, Void, String[]> {
 
         @Override
         protected void onPreExecute() {
@@ -71,23 +71,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(Integer... params) {
+        protected String[] doInBackground(String... params) {
 
             /* If there's no zip code, there's nothing to look up. */
             if (params.length == 0) {
                 return null;
             }
 
-            Integer id = params[0];
-            URL movieRequestUrl = NetworkUtils.buildUrl(id);
 
+            URL movieRequestUrl = NetworkUtils.buildUrl(params[0]);
+            Log.v(TAG,"URL " + movieRequestUrl);
             try {
                 String jsonResponse = NetworkUtils
                         .getResponseFromHttpUrl(movieRequestUrl);
-
-                String jsonData = JsonUtils
+                String[] jsonData = JsonUtils
                         .getMoviePoster(MainActivity.this, jsonResponse);
-                Log.v(TAG, "Array " + jsonData);
                 return jsonData;
 
             } catch (Exception e) {
@@ -97,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String movieData) {
+        protected void onPostExecute(String[] movieData) {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (movieData != null) {
                 showMovieData();

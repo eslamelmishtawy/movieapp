@@ -17,7 +17,7 @@ import java.util.List;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
     private static final String TAG = NetworkUtils.class.getSimpleName();
     public ImageView mMoviePosterImageView;
-    private String mMoviePosters;
+    private String[] mMoviePosters;
     private Context context;
     public MovieAdapter() {
 
@@ -46,7 +46,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder holder, int position) {
-        String movieImage = mMoviePosters;
+        String movieImage = mMoviePosters[position];
         Log.v(TAG, " TEST " + movieImage);
         Picasso.with(context).load(movieImage).into(mMoviePosterImageView);
     }
@@ -54,10 +54,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     @Override
     public int getItemCount() {
         if (null == mMoviePosters) return 0;
-        return mMoviePosters.length();
+        return mMoviePosters.length;
     }
 
-    public void setMovieData(String moviePosters) {
+    public void setMovieData(String[] moviePosters) {
         mMoviePosters = moviePosters;
         notifyDataSetChanged();
     }
