@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="260dp"
     xmlns:tool="http://schemas.android.com/tools"
     >
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
         android:id="@+id/im_movie_images"
         tool:src="@drawable/intersteller"
+        android:background="#000"
         />
 
 </GridLayout>

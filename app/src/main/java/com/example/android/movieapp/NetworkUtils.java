@@ -19,7 +19,7 @@ public class NetworkUtils {
 
     public static URL buildUrl(String key) {
         Uri builtUri = Uri.parse(MOVIE_URL).buildUpon()
-                .path("3/discover/movie/")
+                .path("3/movie/popular")
                 .appendQueryParameter(QUERY_PARAM, key)
                 .build();
 

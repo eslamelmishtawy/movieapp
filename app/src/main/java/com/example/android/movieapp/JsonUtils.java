@@ -29,6 +29,7 @@ public class JsonUtils {
             JSONObject image = moviesArray.getJSONObject(i);
             moviePoster[i] = image.getString(POSTER_PATH);
             moviePoster[i] = "http://image.tmdb.org/t/p/w185//" + moviePoster[i];
+            Log.v(TAG, "poster " + moviePoster[i]);
         }
 
     return moviePoster;

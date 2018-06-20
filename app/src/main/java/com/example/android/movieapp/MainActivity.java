@@ -34,9 +34,10 @@ public class MainActivity extends AppCompatActivity {
         mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
 
         GridLayoutManager layoutManager
-                = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
+                = new GridLayoutManager(this,2,LinearLayoutManager.VERTICAL,false);
 
         mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
         mMovieAdapter = new MovieAdapter();
         mRecyclerView.setAdapter(mMovieAdapter);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadMovieData() {
         showMovieData();
-        String key = "4e300fef67ec466d8676e3e807204ef4";
+        String key = "f21cbdbeb6002cb0247cb93d8865f28a";
         new MovieTask().execute(key);
     }
 
@@ -78,8 +79,8 @@ public class MainActivity extends AppCompatActivity {
                 return null;
             }
 
-
-            URL movieRequestUrl = NetworkUtils.buildUrl(params[0]);
+            String key = params[0];
+            URL movieRequestUrl = NetworkUtils.buildUrl(key);
             Log.v(TAG,"URL " + movieRequestUrl);
             try {
                 String jsonResponse = NetworkUtils
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String[] movieData) {
+            Log.v(TAG, "duuh " + movieData);
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (movieData != null) {
                 showMovieData();
