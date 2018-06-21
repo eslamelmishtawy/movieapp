@@ -45,7 +45,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             int adapterPosition = getAdapterPosition();
             String movieName = mMovieTitles[adapterPosition];
             String moviePoster = mMoviePosters[adapterPosition];
-            mClickHandler.onClick(movieName);
+            String movie = movieName +","+ moviePoster;
+            mClickHandler.onClick(movie);
         }
 
     }

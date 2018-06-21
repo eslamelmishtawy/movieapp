@@ -57,10 +57,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     }
 
     @Override
-    public void onClick(String movieName) {
+    public void onClick(String movie) {
         Context context = this;
         Intent intent = new Intent(MainActivity.this, MovieDetails.class);
-        intent.putExtra(Intent.EXTRA_TEXT, movieName);
+        intent.putExtra(Intent.EXTRA_TEXT, movie);
         startActivity(intent);
     }
 
