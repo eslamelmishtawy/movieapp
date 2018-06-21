@@ -1,5 +1,7 @@
 package com.example.android.movieapp;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,10 +15,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler{
     private RecyclerView mRecyclerView;
     private MovieAdapter mMovieAdapter;
 
@@ -24,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ProgressBar mLoadingIndicator;
     private static final String TAG = NetworkUtils.class.getSimpleName();
+
+    private String[] movieTitles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
-        mMovieAdapter = new MovieAdapter();
+        mMovieAdapter = new MovieAdapter(this);
         mRecyclerView.setAdapter(mMovieAdapter);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         loadMovieData();
@@ -49,6 +54,14 @@ public class MainActivity extends AppCompatActivity {
         showMovieData();
         String key = "f21cbdbeb6002cb0247cb93d8865f28a";
         new MovieTask().execute(key);
+    }
+
+    @Override
+    public void onClick(String movieName) {
+        Context context = this;
+        Intent intent = new Intent(MainActivity.this, MovieDetails.class);
+        intent.putExtra(Intent.EXTRA_TEXT, movieName);
+        startActivity(intent);
     }
 
     private void showMovieData() {
@@ -87,6 +100,9 @@ public class MainActivity extends AppCompatActivity {
                         .getResponseFromHttpUrl(movieRequestUrl);
                 String[] jsonData = JsonUtils
                         .getMoviePoster(MainActivity.this, jsonResponse);
+
+                movieTitles = JsonUtils.getMovieTitles(MainActivity.this, jsonResponse);
+                mMovieAdapter.setMovieTitles(movieTitles);
                 return jsonData;
 
             } catch (Exception e) {
@@ -97,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String[] movieData) {
-            Log.v(TAG, "duuh " + movieData);
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (movieData != null) {
                 showMovieData();

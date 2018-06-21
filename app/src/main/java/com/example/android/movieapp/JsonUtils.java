@@ -28,10 +28,35 @@ public class JsonUtils {
         for(int i = 0; i < moviesArray.length(); i++) {
             JSONObject image = moviesArray.getJSONObject(i);
             moviePoster[i] = image.getString(POSTER_PATH);
-            moviePoster[i] = "http://image.tmdb.org/t/p/w185//" + moviePoster[i];
+            moviePoster[i] = "http://image.tmdb.org/t/p/w500//" + moviePoster[i];
             Log.v(TAG, "poster " + moviePoster[i]);
         }
 
     return moviePoster;
     }
+
+    public static String[] getMovieTitles(Context context, String movieJsonString)
+            throws JSONException {
+
+        final String RESULTS ="results";
+        final String TITLE = "title";
+
+        String[] movieTitles = null;
+
+        JSONObject movieJson = new JSONObject(movieJsonString);
+
+        JSONArray moviesArray = movieJson.getJSONArray(RESULTS);
+
+        movieTitles = new String[moviesArray.length()];
+
+        for(int i = 0; i < moviesArray.length(); i++) {
+            JSONObject title = moviesArray.getJSONObject(i);
+            movieTitles[i] = title.getString(TITLE);
+            Log.v(TAG, "poster " + movieTitles[i]);
+        }
+
+        return movieTitles;
+    }
+
+
 }

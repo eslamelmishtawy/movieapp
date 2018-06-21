@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -16,20 +17,36 @@ import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
     private static final String TAG = NetworkUtils.class.getSimpleName();
-    public ImageView mMoviePosterImageView;
-    private String[] mMoviePosters;
-    private Context context;
-    public MovieAdapter() {
 
+    private String[] mMoviePosters;
+    private String[] mMovieTitles;
+    private Context context;
+
+    private final MovieAdapterOnClickHandler mClickHandler;
+
+    public interface MovieAdapterOnClickHandler {
+        void onClick(String weatherForDay);
     }
 
-    public class MovieAdapterViewHolder extends RecyclerView.ViewHolder{
+    public MovieAdapter(MovieAdapterOnClickHandler clickHandler) {
+        mClickHandler = clickHandler;
+    }
 
+    public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
+        public ImageView mMoviePosterImageView;
         public MovieAdapterViewHolder(View view){
             super(view);
             mMoviePosterImageView = (ImageView) view.findViewById(R.id.im_movie_images);
+            view.setOnClickListener(this);
         }
 
+        @Override
+        public void onClick(View v) {
+            int adapterPosition = getAdapterPosition();
+            String movieName = mMovieTitles[adapterPosition];
+            String moviePoster = mMoviePosters[adapterPosition];
+            mClickHandler.onClick(movieName);
+        }
 
     }
 
@@ -47,8 +64,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder holder, int position) {
         String movieImage = mMoviePosters[position];
-        Log.v(TAG, " TEST " + movieImage);
-        Picasso.with(context).load(movieImage).into(mMoviePosterImageView);
+        Picasso.with(context).load(movieImage).into(holder.mMoviePosterImageView);
     }
 
     @Override
@@ -60,5 +76,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     public void setMovieData(String[] moviePosters) {
         mMoviePosters = moviePosters;
         notifyDataSetChanged();
+    }
+
+    public void setMovieTitles(String[] movieTitles){
+        mMovieTitles = movieTitles;
     }
 }
