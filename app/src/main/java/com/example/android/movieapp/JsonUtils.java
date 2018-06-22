@@ -58,5 +58,31 @@ public class JsonUtils {
         return movieTitles;
     }
 
+    public static String[] getMovieData(Context context, String movieJsonString)
+            throws JSONException {
+
+        final String RESULTS ="results";
+        final String RATE = "vote_average";
+        final String YEAR = "release_date";
+        final String DURATION = "";
+        final String DESCRIPTION = "overview";
+
+        String[] movieData = null;
+
+        JSONObject movieJson = new JSONObject(movieJsonString);
+
+        JSONArray moviesArray = movieJson.getJSONArray(RESULTS);
+
+        movieData = new String[moviesArray.length()];
+
+        for(int i = 0; i < moviesArray.length(); i++) {
+            JSONObject data = moviesArray.getJSONObject(i);
+            movieData[i] = data.getString(YEAR) + "," + data.getString(RATE) + "," + data.getString(DESCRIPTION);
+            Log.v(TAG, "poster " + movieData[i]);
+        }
+
+        return movieData;
+    }
+
 
 }

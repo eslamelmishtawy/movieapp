@@ -32,12 +32,18 @@ public class MovieDetails extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent.hasExtra(Intent.EXTRA_TEXT)) {
             String movieString = intent.getStringExtra(Intent.EXTRA_TEXT);
-            String[] movieArray = movieString.split(",");
+            String[] movieArray = movieString.split(",",5);
             String name = movieArray[0];
             String poster = movieArray[1];
+            String year = movieArray[2].split("-")[0];
+            String rate = movieArray[3];
+            String description = movieArray[4];
+            poster = poster.replaceAll("w500", "w185");
             mName.setText(name);
             Picasso.with(this).load(poster).into(mPoster);
-
+            mYear.setText(year);
+            mDescription.setText(description);
+            mRate.setText(rate + " / 10");
         }
     }
 }

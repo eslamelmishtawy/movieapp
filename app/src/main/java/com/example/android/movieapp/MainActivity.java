@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
     private String[] movieTitles;
+    private String[] movieData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     private void loadMovieData() {
         showMovieData();
-        String key = "f21cbdbeb6002cb0247cb93d8865f28a";
+        String key = "4e300fef67ec466d8676e3e807204ef4";
         new MovieTask().execute(key);
     }
 
@@ -103,6 +104,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
                 movieTitles = JsonUtils.getMovieTitles(MainActivity.this, jsonResponse);
                 mMovieAdapter.setMovieTitles(movieTitles);
+
+                movieData = JsonUtils.getMovieData(MainActivity.this, jsonResponse);
+                mMovieAdapter.setMovieData(movieData);
+
                 return jsonData;
 
             } catch (Exception e) {
@@ -116,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (movieData != null) {
                 showMovieData();
-                mMovieAdapter.setMovieData(movieData);
+                mMovieAdapter.setMoviePosters(movieData);
             } else {
                 showErrorMessage();
             }

@@ -11,15 +11,18 @@ import android.widget.ImageView;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
+import com.squareup.picasso.Cache;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
     private static final String TAG = NetworkUtils.class.getSimpleName();
-
     private String[] mMoviePosters;
     private String[] mMovieTitles;
+    private String[] mMovieData;
     private Context context;
 
     private final MovieAdapterOnClickHandler mClickHandler;
@@ -45,7 +48,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             int adapterPosition = getAdapterPosition();
             String movieName = mMovieTitles[adapterPosition];
             String moviePoster = mMoviePosters[adapterPosition];
-            String movie = movieName +","+ moviePoster;
+            String movieData = mMovieData[adapterPosition];
+            String movie = movieName +","+ moviePoster+","+movieData;
             mClickHandler.onClick(movie);
         }
 
@@ -74,12 +78,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         return mMoviePosters.length;
     }
 
-    public void setMovieData(String[] moviePosters) {
+    public void setMoviePosters(String[] moviePosters) {
         mMoviePosters = moviePosters;
         notifyDataSetChanged();
     }
 
     public void setMovieTitles(String[] movieTitles){
         mMovieTitles = movieTitles;
+    }
+
+    public void setMovieData(String[] movieData){
+        mMovieData = movieData;
     }
 }
