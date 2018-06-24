@@ -18,10 +18,20 @@ public class NetworkUtils {
 
 
     public static URL buildUrl(String key) {
-        Uri builtUri = Uri.parse(MOVIE_URL).buildUpon()
-                .path("3/movie/popular")
-                .appendQueryParameter(QUERY_PARAM, key)
-                .build();
+        Uri builtUri;
+
+        if(MainActivity.rateFlag) {
+            builtUri = Uri.parse(MOVIE_URL).buildUpon()
+                    .path("3/movie/top_rated")
+                    .appendQueryParameter(QUERY_PARAM, key)
+                    .build();
+        }else {
+            builtUri = Uri.parse(MOVIE_URL).buildUpon()
+                    .path("3/movie/popular")
+                    .appendQueryParameter(QUERY_PARAM, key)
+                    .build();
+
+        }
 
         URL url = null;
         try {
