@@ -20,7 +20,19 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.List;
+
+import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler{
     public static boolean rateFlag = false;
@@ -30,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private ProgressBar mLoadingIndicator;
     private RadioButton rateButton;
     private RadioButton popularButton;
+    GridLayoutManager layoutManager;
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
     private String[] movieTitles;
@@ -41,12 +54,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         setContentView(R.layout.activity_main);
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_display);
         mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
-        GridLayoutManager layoutManager
+        layoutManager
                 = new GridLayoutManager(this,2,LinearLayoutManager.VERTICAL,false);
-
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
-        mMovieAdapter = new MovieAdapter(this);
+        mMovieAdapter = new MovieAdapter(MainActivity.this);
         mRecyclerView.setAdapter(mMovieAdapter);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         loadMovieData();
@@ -102,8 +114,31 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     private void loadMovieData() {
         showMovieData();
-        String key = "4e300fef67ec466d8676e3e807204ef4";
-        new MovieTask().execute(key);
+        //String key = "4e300fef67ec466d8676e3e807204ef4";
+        //new MovieTask().execute(key);
+
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl("http://api.themoviedb.org")
+                .addConverterFactory(GsonConverterFactory.create());
+
+        Retrofit retrofit = builder.build();
+        GetData client = retrofit.create(GetData.class);
+        Call<List<RetroNetwork>> call = client.reposForUser("4e300fef67ec466d8676e3e807204ef4");
+        call.enqueue(new Callback<List<RetroNetwork>>() {
+
+
+            @Override
+            public void onResponse(Call<List<RetroNetwork>> call, Response<List<RetroNetwork>> response) {
+                List<RetroNetwork> repos = response.body();
+                mMovieAdapter.setData(repos);
+            }
+
+            @Override
+            public void onFailure(Call<List<RetroNetwork>> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "error :(", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     @Override
@@ -126,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 
-    public class MovieTask extends AsyncTask<String, Void, String[]> {
+    /*public class MovieTask extends AsyncTask<String, Void, String[]> {
 
         @Override
         protected void onPreExecute() {
@@ -137,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         @Override
         protected String[] doInBackground(String... params) {
 
-            /* If there's no zip code, there's nothing to look up. */
+
             if (params.length == 0) {
                 return null;
             }
@@ -175,5 +210,5 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 showErrorMessage();
             }
         }
-    }
+    }*/
 }

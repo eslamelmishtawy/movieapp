@@ -1,5 +1,6 @@
 package com.example.android.movieapp;
 
+
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -24,7 +25,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     private String[] mMovieTitles;
     private String[] mMovieData;
     private Context context;
-
+    private List<RetroNetwork> mData;
     private final MovieAdapterOnClickHandler mClickHandler;
 
     public interface MovieAdapterOnClickHandler {
@@ -36,10 +37,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     }
 
     public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
-        public ImageView mMoviePosterImageView;
+        public TextView mMoviePosterImageView;
         public MovieAdapterViewHolder(View view){
             super(view);
-            mMoviePosterImageView = (ImageView) view.findViewById(R.id.im_movie_images);
+            mMoviePosterImageView = (TextView) view.findViewById(R.id.im_movie_images);
             view.setOnClickListener(this);
         }
 
@@ -68,14 +69,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder holder, int position) {
-        String movieImage = mMoviePosters[position];
-        Picasso.with(context).load(movieImage).into(holder.mMoviePosterImageView);
+        RetroNetwork movieImage = mData.get(position);
+        String name = movieImage.getTitle();
+        //Picasso.with(context).load(movieImage).into(holder.mMoviePosterImageView);
+        holder.mMoviePosterImageView.setText(name);
     }
 
     @Override
     public int getItemCount() {
-        if (null == mMoviePosters) return 0;
-        return mMoviePosters.length;
+        if (null == mData) return 0;
+        return mData.size();
     }
 
     public void setMoviePosters(String[] moviePosters) {
@@ -89,5 +92,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     public void setMovieData(String[] movieData){
         mMovieData = movieData;
+    }
+
+    public void setData(List<RetroNetwork> test){
+        mData = test;
+        notifyDataSetChanged();
     }
 }
