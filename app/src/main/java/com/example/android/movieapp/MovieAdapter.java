@@ -69,10 +69,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder holder, int position) {
-        RetroNetwork movieImage = mData.get(position);
-        String name = movieImage.getTitle();
+        String movieImage = mData.get(3).getResults().get(position).getTitle();
         //Picasso.with(context).load(movieImage).into(holder.mMoviePosterImageView);
-        holder.mMoviePosterImageView.setText(name);
+        holder.mMoviePosterImageView.setText(movieImage);
     }
 
     @Override
