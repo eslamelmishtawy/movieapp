@@ -1,11 +1,14 @@
 package com.example.android.movieapp;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Result extends RetroNetwork{
+public class Result implements Parcelable{
 
     @SerializedName("vote_count")
     @Expose
@@ -49,6 +52,14 @@ public class Result extends RetroNetwork{
     @SerializedName("release_date")
     @Expose
     private String releaseDate;
+
+    Result(Parcel in) {
+        this.title = in.readString();
+        this.voteAverage = in.readDouble();
+        this.overview = in.readString();
+        this.releaseDate = in.readString();
+        this.posterPath = in.readString();
+    }
 
     public Integer getVoteCount() {
         return voteCount;
@@ -160,6 +171,32 @@ public class Result extends RetroNetwork{
 
     public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeDouble(voteAverage);
+        dest.writeString(overview);
+        dest.writeString(posterPath);
+        dest.writeString(releaseDate);
+    }
+
+    static final Parcelable.Creator<Result> CREATOR
+            = new Parcelable.Creator<Result>() {
+
+        public Result createFromParcel(Parcel in) {
+            return new Result(in);
+        }
+
+        public Result[] newArray(int size) {
+            return new Result[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
 }

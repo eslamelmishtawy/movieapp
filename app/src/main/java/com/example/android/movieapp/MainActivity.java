@@ -72,13 +72,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString("sort", mSorting);
-        outState.putSerializable("key", repos);
+        outState.putParcelable("key", repos);
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -87,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         setContentView(R.layout.activity_main);
         if (savedInstanceState != null) {
             mSorting = savedInstanceState.getString("sort");
-            repos = (RetroNetwork) savedInstanceState.getSerializable("key");
+            repos = savedInstanceState.getParcelable("key");
         }
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_display);
         mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
@@ -98,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mMovieAdapter = new MovieAdapter(MainActivity.this);
         mRecyclerView.setAdapter(mMovieAdapter);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
-        mLoadingIndicator.setVisibility(View.VISIBLE);
         loadMovieData();
 
     }
@@ -160,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         Retrofit retrofit = builder.build();
         GetData client = retrofit.create(GetData.class);
         Call<RetroNetwork> call = client.reposForUser(mSorting,"4e300fef67ec466d8676e3e807204ef4");
+        mLoadingIndicator.setVisibility(View.VISIBLE);
         call.enqueue(new Callback<RetroNetwork>() {
 
 
@@ -167,7 +162,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             public void onResponse(Call<RetroNetwork> call, Response<RetroNetwork> response) {
                 mLoadingIndicator.setVisibility(View.INVISIBLE);
                 repos = response.body();
-
                 mMovieAdapter.setMoviePosters(repos);
             }
 
