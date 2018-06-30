@@ -43,15 +43,52 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private RadioButton rateButton;
     private RadioButton popularButton;
     GridLayoutManager layoutManager;
+    private String mSorting = "popular";
+    private RetroNetwork repos;
+    private int positionIndex;
+    private int topView;
+    private RetroNetwork test;
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
     private String[] movieTitles;
     private String[] movieData;
 
     @Override
+    protected void onPause() {
+        positionIndex= layoutManager.findFirstVisibleItemPosition();
+        View startView = mRecyclerView.getChildAt(0);
+        topView = (startView == null) ? 0 : (startView.getTop() - mRecyclerView.getPaddingTop());
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        if (positionIndex!= -1) {
+            layoutManager.scrollToPositionWithOffset(positionIndex, topView);
+        }
+        super.onResume();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString("sort", mSorting);
+        outState.putSerializable("key", repos);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (savedInstanceState != null) {
+            mSorting = savedInstanceState.getString("sort");
+            repos = (RetroNetwork) savedInstanceState.getSerializable("key");
+        }
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_display);
         mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
         layoutManager
@@ -61,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mMovieAdapter = new MovieAdapter(MainActivity.this);
         mRecyclerView.setAdapter(mMovieAdapter);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
+        mLoadingIndicator.setVisibility(View.VISIBLE);
         loadMovieData();
 
     }
@@ -91,15 +129,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             popularButton = dialog.findViewById(R.id.radioPopular);
             rateButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    Toast.makeText(MainActivity.this,"rate",Toast.LENGTH_SHORT).show();
-                    rateFlag = true;
+                    mSorting = "top_rated";
                     loadMovieData();
                 }
             });
             popularButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    Toast.makeText(MainActivity.this,"popular",Toast.LENGTH_SHORT).show();
-                    rateFlag = false;
+                    mSorting = "popular";
                     loadMovieData();
                 }
             });
@@ -123,18 +159,21 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
         Retrofit retrofit = builder.build();
         GetData client = retrofit.create(GetData.class);
-        Call<List<RetroNetwork>> call = client.reposForUser("4e300fef67ec466d8676e3e807204ef4");
-        call.enqueue(new Callback<List<RetroNetwork>>() {
+        Call<RetroNetwork> call = client.reposForUser(mSorting,"4e300fef67ec466d8676e3e807204ef4");
+        call.enqueue(new Callback<RetroNetwork>() {
 
 
             @Override
-            public void onResponse(Call<List<RetroNetwork>> call, Response<List<RetroNetwork>> response) {
-                List<RetroNetwork> repos = response.body();
-                mMovieAdapter.setData(repos);
+            public void onResponse(Call<RetroNetwork> call, Response<RetroNetwork> response) {
+                mLoadingIndicator.setVisibility(View.INVISIBLE);
+                repos = response.body();
+
+                mMovieAdapter.setMoviePosters(repos);
             }
 
             @Override
-            public void onFailure(Call<List<RetroNetwork>> call, Throwable t) {
+            public void onFailure(Call<RetroNetwork> call, Throwable t) {
+                showErrorMessage();
                 Toast.makeText(MainActivity.this, "error :(", Toast.LENGTH_SHORT).show();
             }
         });

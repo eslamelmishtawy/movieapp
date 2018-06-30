@@ -45,7 +45,6 @@ public class MovieDetails extends AppCompatActivity {
             String year = movieArray[2].split("-")[0];
             String rate = movieArray[3];
             String description = movieArray[4];
-            poster = poster.replaceAll("w500", "w185");
             mName.setText(name);
             Picasso.with(this).load(poster).into(mPoster);
             mYear.setText(year);

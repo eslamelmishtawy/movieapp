@@ -4,12 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="260dp"
     xmlns:tool="http://schemas.android.com/tools"
+    android:id="@+id/gl_main"
     >
 
-    <TextView
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/im_movie_images"
+        android:scaleType="fitXY"
+        android:src="@drawable/intersteller"
         />
 
 </GridLayout>

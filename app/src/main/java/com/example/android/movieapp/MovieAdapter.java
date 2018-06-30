@@ -21,11 +21,10 @@ import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
     private static final String TAG = NetworkUtils.class.getSimpleName();
-    private String[] mMoviePosters;
+    private RetroNetwork mMoviePosters;
     private String[] mMovieTitles;
     private String[] mMovieData;
     private Context context;
-    private List<RetroNetwork> mData;
     private final MovieAdapterOnClickHandler mClickHandler;
 
     public interface MovieAdapterOnClickHandler {
@@ -37,20 +36,22 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     }
 
     public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
-        public TextView mMoviePosterImageView;
+        public ImageView mMoviePosterImageView;
         public MovieAdapterViewHolder(View view){
             super(view);
-            mMoviePosterImageView = (TextView) view.findViewById(R.id.im_movie_images);
+            mMoviePosterImageView = (ImageView) view.findViewById(R.id.im_movie_images);
             view.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            String movieName = mMovieTitles[adapterPosition];
-            String moviePoster = mMoviePosters[adapterPosition];
-            String movieData = mMovieData[adapterPosition];
-            String movie = movieName +","+ moviePoster+","+movieData;
+            String movieName = mMoviePosters.getResults().get(adapterPosition).getTitle();
+            String moviePoster = "http://image.tmdb.org/t/p/w185//" + mMoviePosters.getResults().get(adapterPosition).getPosterPath();
+            String movieYear = mMoviePosters.getResults().get(adapterPosition).getReleaseDate();
+            String movieDesc = mMoviePosters.getResults().get(adapterPosition).getOverview();
+            Double movieRate = mMoviePosters.getResults().get(adapterPosition).getVoteAverage();
+            String movie = movieName +","+ moviePoster+","+ movieYear + "," + movieRate + "," + movieDesc;
             mClickHandler.onClick(movie);
         }
 
@@ -69,18 +70,18 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder holder, int position) {
-        String movieImage = mData.get(3).getResults().get(position).getTitle();
-        //Picasso.with(context).load(movieImage).into(holder.mMoviePosterImageView);
-        holder.mMoviePosterImageView.setText(movieImage);
+        String movieImage = "http://image.tmdb.org/t/p/w500//" +
+                mMoviePosters.getResults().get(position).getPosterPath();
+        Picasso.with(context).load(movieImage).into(holder.mMoviePosterImageView);
     }
 
     @Override
     public int getItemCount() {
-        if (null == mData) return 0;
-        return mData.size();
+        if (null == mMoviePosters) return 0;
+        return mMoviePosters.getResults().size();
     }
 
-    public void setMoviePosters(String[] moviePosters) {
+    public void setMoviePosters(RetroNetwork moviePosters) {
         mMoviePosters = moviePosters;
         notifyDataSetChanged();
     }
@@ -93,8 +94,4 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         mMovieData = movieData;
     }
 
-    public void setData(List<RetroNetwork> test){
-        mData = test;
-        notifyDataSetChanged();
-    }
 }

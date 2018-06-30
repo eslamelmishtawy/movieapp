@@ -10,7 +10,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface GetData {
-    @GET("/3/movie/top_rated")
-    Call<List<RetroNetwork>> reposForUser(@Query("api_key") String key);
+    @GET("/3/movie/{data}")
+    Call<RetroNetwork> reposForUser(@Path("data") String data, @Query("api_key") String key);
 
 }
