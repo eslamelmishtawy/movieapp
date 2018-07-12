@@ -25,7 +25,6 @@ public class MovieDetails extends AppCompatActivity {
         setContentView(R.layout.activity_movie_details);
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null){
-            actionBar.setTitle(getResources().getString(R.string.app_name));
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         mName = (TextView) findViewById(R.id.tv_movie_name);

@@ -80,20 +80,27 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+            mRecyclerView = (RecyclerView) findViewById(R.id.rv_display);
+            mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
+            layoutManager
+                    = new GridLayoutManager(this, 2, LinearLayoutManager.VERTICAL, false);
+            mRecyclerView.setLayoutManager(layoutManager);
+            mRecyclerView.setHasFixedSize(true);
+            mMovieAdapter = new MovieAdapter(MainActivity.this);
+            mRecyclerView.setAdapter(mMovieAdapter);
+            mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
+        if (positionIndex!= -1) {
+            layoutManager.scrollToPositionWithOffset(positionIndex, topView);
+        }
         if (savedInstanceState != null) {
             mSorting = savedInstanceState.getString("sort");
             repos = savedInstanceState.getParcelable("key");
+            mMovieAdapter.setMoviePosters(repos);
+        }else {
+
+            loadMovieData();
         }
-        mRecyclerView = (RecyclerView) findViewById(R.id.rv_display);
-        mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
-        layoutManager
-                = new GridLayoutManager(this,2,LinearLayoutManager.VERTICAL,false);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setHasFixedSize(true);
-        mMovieAdapter = new MovieAdapter(MainActivity.this);
-        mRecyclerView.setAdapter(mMovieAdapter);
-        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
-        loadMovieData();
 
     }
 
