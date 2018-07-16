@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,9 +35,9 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler{
-    public static boolean rateFlag = false;
+public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
     private RecyclerView mRecyclerView;
+    private ScrollView mScrollView;
     private MovieAdapter mMovieAdapter;
     private TextView mErrorMessageDisplay;
     private ProgressBar mLoadingIndicator;
@@ -45,34 +46,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     GridLayoutManager layoutManager;
     private String mSorting = "popular";
     private RetroNetwork repos;
-    private int positionIndex;
-    private int topView;
-    private RetroNetwork test;
     private static final String TAG = NetworkUtils.class.getSimpleName();
-
-    private String[] movieTitles;
-    private String[] movieData;
-
-    @Override
-    protected void onPause() {
-        positionIndex= layoutManager.findFirstVisibleItemPosition();
-        View startView = mRecyclerView.getChildAt(0);
-        topView = (startView == null) ? 0 : (startView.getTop() - mRecyclerView.getPaddingTop());
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        if (positionIndex!= -1) {
-            layoutManager.scrollToPositionWithOffset(positionIndex, topView);
-        }
-        super.onResume();
-    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString("sort", mSorting);
         outState.putParcelable("key", repos);
+        outState.putIntArray("ARTICLE_SCROLL_POSITION",
+                new int[]{mScrollView.getScrollX(), mScrollView.getScrollY()});
         super.onSaveInstanceState(outState);
     }
 
@@ -80,25 +61,29 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-            mRecyclerView = (RecyclerView) findViewById(R.id.rv_display);
-            mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
-            layoutManager
-                    = new GridLayoutManager(this, 2, LinearLayoutManager.VERTICAL, false);
-            mRecyclerView.setLayoutManager(layoutManager);
-            mRecyclerView.setHasFixedSize(true);
-            mMovieAdapter = new MovieAdapter(MainActivity.this);
-            mRecyclerView.setAdapter(mMovieAdapter);
-            mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
-        if (positionIndex!= -1) {
-            layoutManager.scrollToPositionWithOffset(positionIndex, topView);
-        }
+        mScrollView = (ScrollView) findViewById(R.id.scroll_view);
+        mRecyclerView = (RecyclerView) findViewById(R.id.rv_display);
+        mRecyclerView.setNestedScrollingEnabled(false);
+        mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
+        layoutManager
+                = new GridLayoutManager(this, 2, LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
+        mMovieAdapter = new MovieAdapter(MainActivity.this);
+        mRecyclerView.setAdapter(mMovieAdapter);
+        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         if (savedInstanceState != null) {
             mSorting = savedInstanceState.getString("sort");
             repos = savedInstanceState.getParcelable("key");
             mMovieAdapter.setMoviePosters(repos);
-        }else {
-
+            final int[] position = savedInstanceState.getIntArray("ARTICLE_SCROLL_POSITION");
+            if (position != null)
+                mScrollView.post(new Runnable() {
+                    public void run() {
+                        mScrollView.scrollTo(position[0], position[1]);
+                    }
+                });
+        } else {
             loadMovieData();
         }
 
@@ -148,19 +133,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     }
 
 
-
     private void loadMovieData() {
         showMovieData();
-        //String key = "4e300fef67ec466d8676e3e807204ef4";
-        //new MovieTask().execute(key);
-
         Retrofit.Builder builder = new Retrofit.Builder()
                 .baseUrl("http://api.themoviedb.org")
                 .addConverterFactory(GsonConverterFactory.create());
 
         Retrofit retrofit = builder.build();
         GetData client = retrofit.create(GetData.class);
-        Call<RetroNetwork> call = client.reposForUser(mSorting,"4e300fef67ec466d8676e3e807204ef4");
+        Call<RetroNetwork> call = client.reposForUser(mSorting, "4e300fef67ec466d8676e3e807204ef4");
         mLoadingIndicator.setVisibility(View.VISIBLE);
         call.enqueue(new Callback<RetroNetwork>() {
 
@@ -197,58 +178,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private void showErrorMessage() {
 
         mRecyclerView.setVisibility(View.INVISIBLE);
-
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 
-    /*public class MovieTask extends AsyncTask<String, Void, String[]> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mLoadingIndicator.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected String[] doInBackground(String... params) {
-
-
-            if (params.length == 0) {
-                return null;
-            }
-
-            String key = params[0];
-            URL movieRequestUrl = NetworkUtils.buildUrl(key);
-            Log.v(TAG,"URL " + movieRequestUrl);
-            try {
-                String jsonResponse = NetworkUtils
-                        .getResponseFromHttpUrl(movieRequestUrl);
-                String[] jsonData = JsonUtils
-                        .getMoviePoster(MainActivity.this, jsonResponse);
-
-                movieTitles = JsonUtils.getMovieTitles(MainActivity.this, jsonResponse);
-                mMovieAdapter.setMovieTitles(movieTitles);
-
-                movieData = JsonUtils.getMovieData(MainActivity.this, jsonResponse);
-                mMovieAdapter.setMovieData(movieData);
-
-                return jsonData;
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String[] movieData) {
-            mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if (movieData != null) {
-                showMovieData();
-                mMovieAdapter.setMoviePosters(movieData);
-            } else {
-                showErrorMessage();
-            }
-        }
-    }*/
 }

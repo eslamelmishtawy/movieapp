@@ -13,4 +13,9 @@ public interface GetData {
     @GET("/3/movie/{data}")
     Call<RetroNetwork> reposForUser(@Path("data") String data, @Query("api_key") String key);
 
+    @GET("/3/movie/{id}/videos")
+    Call<ViewTrailers> viewTrailers(@Path("id") String id, @Query("api_key") String key);
+
+    @GET("3/movie/{id}/reviews")
+    Call<ViewReviews> viewReviews(@Path("id") String id, @Query("api_key") String key);
 }

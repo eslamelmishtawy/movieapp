@@ -6,12 +6,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/scroll_view">
 <android.support.v7.widget.RecyclerView
     android:id="@+id/rv_display"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    />
+    /></ScrollView>
     <TextView
         android:id="@+id/tv_error_message_display"
         android:layout_width="wrap_content"

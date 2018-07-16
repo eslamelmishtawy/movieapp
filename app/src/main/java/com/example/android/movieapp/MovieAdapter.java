@@ -20,10 +20,9 @@ import java.io.File;
 import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
+    private static String mMovieId;
     private static final String TAG = NetworkUtils.class.getSimpleName();
     private RetroNetwork mMoviePosters;
-    private String[] mMovieTitles;
-    private String[] mMovieData;
     private Context context;
     private final MovieAdapterOnClickHandler mClickHandler;
 
@@ -47,6 +46,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
             String movieName = mMoviePosters.getResults().get(adapterPosition).getTitle();
+            mMovieId = Integer.toString(mMoviePosters.getResults().get(adapterPosition).getId());
             String moviePoster = "http://image.tmdb.org/t/p/w185//" + mMoviePosters.getResults().get(adapterPosition).getPosterPath();
             String movieYear = mMoviePosters.getResults().get(adapterPosition).getReleaseDate();
             String movieDesc = mMoviePosters.getResults().get(adapterPosition).getOverview();
@@ -86,12 +86,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         notifyDataSetChanged();
     }
 
-    public void setMovieTitles(String[] movieTitles){
-        mMovieTitles = movieTitles;
-    }
-
-    public void setMovieData(String[] movieData){
-        mMovieData = movieData;
+    public static String getmMovieId(){
+        return mMovieId;
     }
 
 }
