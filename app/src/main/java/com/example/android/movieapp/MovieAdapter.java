@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
+import com.example.android.movieapp.database.FavEntry;
 import com.squareup.picasso.Cache;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -45,13 +46,15 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
+            int movieId = mMoviePosters.getResults().get(adapterPosition).getId();
             String movieName = mMoviePosters.getResults().get(adapterPosition).getTitle();
             mMovieId = Integer.toString(mMoviePosters.getResults().get(adapterPosition).getId());
             String moviePoster = "http://image.tmdb.org/t/p/w185//" + mMoviePosters.getResults().get(adapterPosition).getPosterPath();
             String movieYear = mMoviePosters.getResults().get(adapterPosition).getReleaseDate();
             String movieDesc = mMoviePosters.getResults().get(adapterPosition).getOverview();
             Double movieRate = mMoviePosters.getResults().get(adapterPosition).getVoteAverage();
-            String movie = movieName +","+ moviePoster+","+ movieYear + "," + movieRate + "," + movieDesc;
+            String movie = Integer.toString(movieId) + "," + movieName +","+ moviePoster+","+ movieYear + "," + movieRate + "," + movieDesc;
+
             mClickHandler.onClick(movie);
         }
 
@@ -89,5 +92,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     public static String getmMovieId(){
         return mMovieId;
     }
+
+
 
 }

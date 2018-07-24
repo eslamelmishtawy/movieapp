@@ -59,6 +59,16 @@
                 android:id="@+id/tv_rate"
                 tools:text="Rate"
                 android:textSize="30sp"/>
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:textSize="15sp"
+                android:gravity="center"
+                android:background="#1ca6a6"
+                android:text="MARK AS FAVOURIT"
+                android:textAllCaps="true"
+                android:id="@+id/fav_button"/>
+
         </LinearLayout>
 
     </RelativeLayout>

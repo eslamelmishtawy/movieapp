@@ -7,30 +7,10 @@
     android:padding="10dp"
     >
 
-    <RadioGroup
-
-        android:id="@+id/radioSort"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        >
-
-        <RadioButton
-            android:id="@+id/radioPopular"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/sort_popular"
-            android:textSize="20sp"
-            android:checked="true"
-            />
-
-        <RadioButton
-            android:id="@+id/radioRate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/sort_rate"
-            android:textSize="20sp"
-            />
-
-    </RadioGroup>
+    <Spinner
+        android:id="@+id/sortSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 
 </LinearLayout>

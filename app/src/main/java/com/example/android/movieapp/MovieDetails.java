@@ -1,9 +1,14 @@
 package com.example.android.movieapp;
 
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +16,7 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,7 +24,12 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.movieapp.database.AppDatabase;
+import com.example.android.movieapp.database.FavEntry;
 import com.squareup.picasso.Picasso;
+
+import java.util.Date;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,6 +53,20 @@ public class MovieDetails extends AppCompatActivity implements TrailersAdapter.T
     private TrailersAdapter mTrailersAdapter;
     private ReviewAdapter mReviewAdapter;
     private ScrollView mScrollView;
+    private TextView mFavButton;
+    private AppDatabase mDb;
+    List<String> listIds;
+
+
+
+    private static final String TAG = MovieDetails.class.getSimpleName();
+
+    String id;
+    String name;
+    String poster;
+    String year;
+    String rate;
+    String description;
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -84,20 +109,50 @@ public class MovieDetails extends AppCompatActivity implements TrailersAdapter.T
         mRecyclerViewReview.setAdapter(mReviewAdapter);
         mPoster = (ImageView) findViewById(R.id.im_movie_image);
         Intent intent = getIntent();
-        if (intent.hasExtra(Intent.EXTRA_TEXT)) {
+        mFavButton = (TextView) findViewById(R.id.fav_button);
+        mDb = AppDatabase.getInstance(getApplicationContext());
+
+
+        if ( intent.hasExtra(Intent.EXTRA_TEXT)) {
             String movieString = intent.getStringExtra(Intent.EXTRA_TEXT);
-            String[] movieArray = movieString.split(",",5);
-            String name = movieArray[0];
-            String poster = movieArray[1];
-            String year = movieArray[2].split("-")[0];
-            String rate = movieArray[3];
-            String description = movieArray[4];
+            String[] movieArray = movieString.split(",", 6);
+            id = movieArray[0];
+            name = movieArray[1];
+            poster = movieArray[2];
+            year = movieArray[3].split("-")[0];
+            rate = movieArray[4];
+            description = movieArray[5];
             mName.setText(name);
-            Picasso.with(this).load(poster).into(mPoster);
+            Picasso.with(MovieDetails.this).load(poster).into(mPoster);
             mYear.setText(year);
             mDescription.setText(description);
             mRate.setText(rate + " / 10");
         }
+
+
+        mFavButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final FavEntry fav = new FavEntry(id, name, poster, year, rate, description);
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                            // insert new task
+                        if(mDb.taskDao().selectUserById(id) == null) {
+
+                            mDb.taskDao().insertTask(fav);
+
+                        }
+                        else {
+
+                            mDb.taskDao().deleteByUserId(id);
+
+                        }
+                        finish();
+                    }
+                });
+            }
+        });
 
         if (savedInstanceState != null) {
             trailers = savedInstanceState.getParcelable("key");
@@ -117,7 +172,6 @@ public class MovieDetails extends AppCompatActivity implements TrailersAdapter.T
         }
 
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
