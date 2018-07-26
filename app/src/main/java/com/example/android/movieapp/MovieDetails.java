@@ -202,7 +202,7 @@ public class MovieDetails extends AppCompatActivity implements TrailersAdapter.T
 
         Retrofit retrofit = builder.build();
         GetData client = retrofit.create(GetData.class);
-        Call<ViewTrailers> call = client.viewTrailers(MovieAdapter.getmMovieId(), "4e300fef67ec466d8676e3e807204ef4");
+        Call<ViewTrailers> call = client.viewTrailers(id, "4e300fef67ec466d8676e3e807204ef4");
         call.enqueue(new Callback<ViewTrailers>() {
 
 
@@ -225,7 +225,7 @@ public class MovieDetails extends AppCompatActivity implements TrailersAdapter.T
 
         Retrofit retrofit = builder.build();
         GetData client = retrofit.create(GetData.class);
-        Call<ViewReviews> call = client.viewReviews(MovieAdapter.getmMovieId(), "4e300fef67ec466d8676e3e807204ef4");
+        Call<ViewReviews> call = client.viewReviews(id, "4e300fef67ec466d8676e3e807204ef4");
         call.enqueue(new Callback<ViewReviews>() {
 
 
