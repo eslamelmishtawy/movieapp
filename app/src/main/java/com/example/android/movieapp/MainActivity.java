@@ -161,35 +161,35 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
                 public void onItemSelected(AdapterView<?> parent, View view, int pos, long id)
                 {
                     item1 = spin.getSelectedItem().toString();
-                        if(item1 == "popular" && mSorting != "popular"){
-                            mNoFavMessage.setVisibility(View.INVISIBLE);
-                            mSorting = "popular";
-                            mRecyclerView.setAdapter(mMovieAdapter);
-                            loadMovieData();
-                        }else if(item1 == "top_Rated" && mSorting != "top_rated"){
-                            mNoFavMessage.setVisibility(View.INVISIBLE);
-                            mSorting = "top_rated";
-                            mRecyclerView.setAdapter(mMovieAdapter);
-                            loadMovieData();
-                        }else if(item1 == "favourits" && mSorting != ""){
-                            mSorting = "favourits";
-                            MainViewModel viewModel = ViewModelProviders.of(MainActivity.this).get(MainViewModel.class);
-                            viewModel.getTasks().observe(MainActivity.this, new Observer<List<FavEntry>>() {
-                                @Override
-                                public void onChanged(@Nullable List<FavEntry> taskEntries) {
-                                    Log.d(TAG, "Updating list of tasks from LiveData in ViewModel");
-                                    if(taskEntries.size() == 0){
-                                        mRecyclerView.setVisibility(View.INVISIBLE);
-                                        mNoFavMessage.setVisibility(View.VISIBLE);
-                                    }else {
-                                        mRecyclerView.setVisibility(View.VISIBLE);
-                                        mNoFavMessage.setVisibility(View.INVISIBLE);
-                                        mRecyclerView.setAdapter(mFavsAdapter);
-                                        mFavsAdapter.setFavMovies(taskEntries);
-                                    }
+                    if(item1 == "popular" && mSorting != "popular"){
+                        mNoFavMessage.setVisibility(View.INVISIBLE);
+                        mSorting = "popular";
+                        mRecyclerView.setAdapter(mMovieAdapter);
+                        loadMovieData();
+                    }else if(item1 == "top_Rated" && mSorting != "top_rated"){
+                        mNoFavMessage.setVisibility(View.INVISIBLE);
+                        mSorting = "top_rated";
+                        mRecyclerView.setAdapter(mMovieAdapter);
+                        loadMovieData();
+                    }else if(item1 == "favourits" && mSorting != ""){
+                        mSorting = "favourits";
+                        MainViewModel viewModel = ViewModelProviders.of(MainActivity.this).get(MainViewModel.class);
+                        viewModel.getTasks().observe(MainActivity.this, new Observer<List<FavEntry>>() {
+                            @Override
+                            public void onChanged(@Nullable List<FavEntry> taskEntries) {
+                                Log.d(TAG, "Updating list of tasks from LiveData in ViewModel");
+                                if(taskEntries.size() == 0){
+                                    mRecyclerView.setVisibility(View.INVISIBLE);
+                                    mNoFavMessage.setVisibility(View.VISIBLE);
+                                }else {
+                                    mRecyclerView.setVisibility(View.VISIBLE);
+                                    mNoFavMessage.setVisibility(View.INVISIBLE);
+                                    mRecyclerView.setAdapter(mFavsAdapter);
+                                    mFavsAdapter.setFavMovies(taskEntries);
                                 }
-                            });
-                        }
+                            }
+                        });
+                    }
 
 
                 }

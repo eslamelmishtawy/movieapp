@@ -65,7 +65,7 @@
                 android:textSize="15sp"
                 android:gravity="center"
                 android:background="#1ca6a6"
-                android:text="MARK AS FAVOURIT"
+                android:text="UN/FAVOURIT"
                 android:textAllCaps="true"
                 android:id="@+id/fav_button"/>
 

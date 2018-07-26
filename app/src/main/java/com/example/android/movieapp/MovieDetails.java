@@ -137,15 +137,28 @@ public class MovieDetails extends AppCompatActivity implements TrailersAdapter.T
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                            // insert new task
+                        // insert new task
                         if(mDb.taskDao().selectUserById(id) == null) {
 
                             mDb.taskDao().insertTask(fav);
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    Toast.makeText(MovieDetails.this, "Added to favourits ;)", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                            Intent intent = new Intent(MovieDetails.this, MainActivity.class);
+                            startActivity(intent);
 
                         }
                         else {
 
                             mDb.taskDao().deleteByUserId(id);
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    Toast.makeText(MovieDetails.this, "Removed from favourits :|", Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
                         }
                         finish();
