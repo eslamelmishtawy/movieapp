@@ -127,6 +127,13 @@ public class MovieDetails extends AppCompatActivity implements TrailersAdapter.T
             mYear.setText(year);
             mDescription.setText(description);
             mRate.setText(rate + " / 10");
+
+
+            if(MainActivity.inDB){
+                mFavButton.setText("UnMark Fav");
+            }else{
+                mFavButton.setText("Mark Fav");
+            }
         }
 
 
@@ -143,6 +150,7 @@ public class MovieDetails extends AppCompatActivity implements TrailersAdapter.T
                             mDb.taskDao().insertTask(fav);
                             runOnUiThread(new Runnable() {
                                 public void run() {
+                                    mFavButton.setText("UnMark Fav");
                                     Toast.makeText(MovieDetails.this, "Added to favourits ;)", Toast.LENGTH_SHORT).show();
                                 }
                             });
@@ -153,6 +161,7 @@ public class MovieDetails extends AppCompatActivity implements TrailersAdapter.T
                             mDb.taskDao().deleteByUserId(id);
                             runOnUiThread(new Runnable() {
                                 public void run() {
+                                    mFavButton.setText("Mark Fav");
                                     Toast.makeText(MovieDetails.this, "Removed from favourits :|", Toast.LENGTH_SHORT).show();
                                 }
                             });

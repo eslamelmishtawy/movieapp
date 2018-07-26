@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     private AppDatabase mDb;
     private String item1 = "popular";
     private Spinner spin;
+    public static boolean inDB;
     String[] sorting={"popular","top_Rated","favourits"};
 
     @Override
@@ -237,6 +238,20 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     @Override
     public void onClick(String movie) {
         Context context = this;
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                // insert new task
+                if(mDb.taskDao().selectUserById(MovieAdapter.getmMovieId()) == null) {
+                    inDB = false;
+                }
+                else {
+
+                    inDB = true;
+                }
+            }
+        });
+
         Intent intent = new Intent(MainActivity.this, MovieDetails.class);
         intent.putExtra(Intent.EXTRA_TEXT, movie);
         startActivity(intent);
