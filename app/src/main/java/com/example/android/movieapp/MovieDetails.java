@@ -147,9 +147,6 @@ public class MovieDetails extends AppCompatActivity implements TrailersAdapter.T
                                 }
                             });
 
-                            Intent intent = new Intent(MovieDetails.this, MainActivity.class);
-                            startActivity(intent);
-
                         }
                         else {
 
@@ -161,7 +158,6 @@ public class MovieDetails extends AppCompatActivity implements TrailersAdapter.T
                             });
 
                         }
-                        finish();
                     }
                 });
             }

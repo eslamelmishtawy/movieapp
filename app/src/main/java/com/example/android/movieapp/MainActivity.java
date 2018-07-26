@@ -47,7 +47,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler, FavsAdapter.FavsAdapterOnClickHandler {
     private RecyclerView mRecyclerView;
-    private ScrollView mScrollView;
     private MovieAdapter mMovieAdapter;
     private FavsAdapter mFavsAdapter;
     private TextView mErrorMessageDisplay;
@@ -69,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         outState.putString("spin", item1);
         outState.putParcelable("key", repos);
         outState.putIntArray("ARTICLE_SCROLL_POSITION",
-                new int[]{mScrollView.getScrollX(), mScrollView.getScrollY()});
+                new int[]{mRecyclerView.getScrollX(), mRecyclerView.getScrollY()});
         super.onSaveInstanceState(outState);
     }
 
@@ -77,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mScrollView = (ScrollView) findViewById(R.id.scroll_view);
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_display);
         mRecyclerView.setNestedScrollingEnabled(false);
         mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
@@ -118,9 +116,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             }
             final int[] position = savedInstanceState.getIntArray("ARTICLE_SCROLL_POSITION");
             if (position != null)
-                mScrollView.post(new Runnable() {
+                mRecyclerView.post(new Runnable() {
                     public void run() {
-                        mScrollView.scrollTo(position[0], position[1]);
+                        mRecyclerView.scrollTo(position[0], position[1]);
                     }
                 });
         } else {
